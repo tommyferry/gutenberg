@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
+import { omit } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -14,30 +14,27 @@ import { createBlock } from '@wordpress/blocks';
 import {
 	BlockControls,
 	InspectorControls,
+	InnerBlocks,
 	BlockAlignmentToolbar,
 	MediaPlaceholder,
 	MediaUpload,
-	AlignmentToolbar,
 	RichText,
 } from '@wordpress/editor';
+
+/**
+ * Internal dependencies
+ */
+import './editor.scss';
+import './style.scss';
 
 const validAlignments = [ 'left', 'center', 'right', 'wide', 'full' ];
 
 const blockAttributes = {
-	title: {
-		type: 'array',
-		source: 'children',
-		selector: 'p',
-	},
 	url: {
 		type: 'string',
 	},
 	align: {
 		type: 'string',
-	},
-	contentAlign: {
-		type: 'string',
-		default: 'center',
 	},
 	id: {
 		type: 'number',
@@ -54,6 +51,14 @@ const blockAttributes = {
 
 export const name = 'core/cover-image';
 
+const INNER_BLOCKS_TEMPLATE = [
+	[ 'core/paragraph', {
+		align: 'center',
+		fontSize: 'large',
+		placeholder: __( 'Write title…' ),
+	} ],
+];
+const INNER_BLOCKS_ALLOWED_BLOCKS = [ 'core/button', 'core/heading', 'core/paragraph' ];
 export const settings = {
 	title: __( 'Cover Image' ),
 
@@ -69,13 +74,6 @@ export const settings = {
 		from: [
 			{
 				type: 'block',
-				blocks: [ 'core/heading' ],
-				transform: ( { content } ) => (
-					createBlock( 'core/cover-image', { title: content } )
-				),
-			},
-			{
-				type: 'block',
 				blocks: [ 'core/image' ],
 				transform: ( { caption, url, align, id } ) => (
 					createBlock( 'core/cover-image', {
@@ -88,13 +86,6 @@ export const settings = {
 			},
 		],
 		to: [
-			{
-				type: 'block',
-				blocks: [ 'core/heading' ],
-				transform: ( { title } ) => (
-					createBlock( 'core/heading', { content: title } )
-				),
-			},
 			{
 				type: 'block',
 				blocks: [ 'core/image' ],
@@ -117,8 +108,8 @@ export const settings = {
 		}
 	},
 
-	edit: withNotices( ( { attributes, setAttributes, isSelected, className, noticeOperations, noticeUI } ) => {
-		const { url, title, align, contentAlign, id, hasParallax, dimRatio } = attributes;
+	edit: withNotices( ( { attributes, setAttributes, className, noticeOperations, noticeUI } ) => {
+		const { align, url, id, hasParallax, dimRatio } = attributes;
 		const updateAlignment = ( nextAlign ) => setAttributes( { align: nextAlign } );
 		const onSelectImage = ( media ) => {
 			if ( ! media || ! media.url ) {
@@ -133,7 +124,6 @@ export const settings = {
 		const style = backgroundImageStyles( url );
 		const classes = classnames(
 			className,
-			contentAlign !== 'center' && `has-${ contentAlign }-content`,
 			dimRatioToClass( dimRatio ),
 			{
 				'has-background-dim': dimRatio !== 0,
@@ -147,12 +137,6 @@ export const settings = {
 					<BlockAlignmentToolbar
 						value={ align }
 						onChange={ updateAlignment }
-					/>
-					<AlignmentToolbar
-						value={ contentAlign }
-						onChange={ ( nextAlign ) => {
-							setAttributes( { contentAlign: nextAlign } );
-						} }
 					/>
 					<Toolbar>
 						<MediaUpload
@@ -193,16 +177,8 @@ export const settings = {
 		);
 
 		if ( ! url ) {
-			const hasTitle = ! isEmpty( title );
-			const icon = hasTitle ? undefined : 'format-image';
-			const label = hasTitle ? (
-				<RichText
-					tagName="h2"
-					value={ title }
-					onChange={ ( value ) => setAttributes( { title: value } ) }
-					inlineToolbar
-				/>
-			) : __( 'Cover Image' );
+			const icon = 'format-image';
+			const label = __( 'Cover Image' );
 
 			return (
 				<Fragment>
@@ -232,23 +208,19 @@ export const settings = {
 					style={ style }
 					className={ classes }
 				>
-					{ ( ! RichText.isEmpty( title ) || isSelected ) && (
-						<RichText
-							tagName="p"
-							className="wp-block-cover-image-text"
-							placeholder={ __( 'Write title…' ) }
-							value={ title }
-							onChange={ ( value ) => setAttributes( { title: value } ) }
-							inlineToolbar
+					<div className="wp-block-cover-image__inner-container">
+						<InnerBlocks
+							template={ INNER_BLOCKS_TEMPLATE }
+							allowedBlocks={ INNER_BLOCKS_ALLOWED_BLOCKS }
 						/>
-					) }
+					</div>
 				</div>
 			</Fragment>
 		);
 	} ),
 
 	save( { attributes, className } ) {
-		const { url, title, hasParallax, dimRatio, align, contentAlign } = attributes;
+		const { url, hasParallax, dimRatio, align } = attributes;
 		const style = backgroundImageStyles( url );
 		const classes = classnames(
 			className,
@@ -256,21 +228,68 @@ export const settings = {
 			{
 				'has-background-dim': dimRatio !== 0,
 				'has-parallax': hasParallax,
-				[ `has-${ contentAlign }-content` ]: contentAlign !== 'center',
 			},
 			align ? `align${ align }` : null,
 		);
 
 		return (
 			<div className={ classes } style={ style }>
-				{ ! RichText.isEmpty( title ) && (
-					<RichText.Content tagName="p" className="wp-block-cover-image-text" value={ title } />
-				) }
+				<div className="wp-block-cover-image__inner-container">
+					<InnerBlocks.Content />
+				</div>
 			</div>
 		);
 	},
 
 	deprecated: [ {
+		attributes: {
+			...blockAttributes,
+			title: {
+				type: 'array',
+				source: 'children',
+				selector: 'p',
+			},
+			contentAlign: {
+				type: 'string',
+				default: 'center',
+			},
+		},
+
+		save( { attributes, className } ) {
+			const { url, title, hasParallax, dimRatio, align, contentAlign } = attributes;
+			const style = backgroundImageStyles( url );
+			const classes = classnames(
+				className,
+				dimRatioToClass( dimRatio ),
+				{
+					'has-background-dim': dimRatio !== 0,
+					'has-parallax': hasParallax,
+					[ `has-${ contentAlign }-content` ]: contentAlign !== 'center',
+				},
+				align ? `align${ align }` : null,
+			);
+
+			return (
+				<div className={ classes } style={ style }>
+					{ title && title.length > 0 && (
+						<RichText.Content tagName="p" className="wp-block-cover-image-text" value={ title } />
+					) }
+				</div>
+			);
+		},
+
+		migrate( attributes ) {
+			return [
+				omit( attributes, [ 'title', 'contentAlign' ] ),
+				[ createBlock( 'core/paragraph', {
+					content: attributes.title,
+					align: attributes.contentAlign,
+					fontSize: 'large',
+					placeholder: __( 'Write title…' ),
+				} ) ],
+			];
+		},
+	}, {
 		attributes: {
 			...blockAttributes,
 			title: {
