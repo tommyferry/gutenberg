@@ -22,7 +22,7 @@ import {
 	RichText,
 	mediaUpload,
 } from '@wordpress/editor';
-import { getBlobByURL } from '@wordpress/blob';
+import { getBlobByURL, isBlobURL } from '@wordpress/blob';
 
 class VideoEdit extends Component {
 	constructor() {
@@ -43,7 +43,7 @@ class VideoEdit extends Component {
 	componentDidMount() {
 		const { attributes, noticeOperations, setAttributes } = this.props;
 		const { id, src = '' } = attributes;
-		if ( ! id && src.indexOf( 'blob:' ) === 0 ) {
+		if ( ! id && isBlobURL( src ) ) {
 			const file = getBlobByURL( src );
 			if ( file ) {
 				mediaUpload( {
