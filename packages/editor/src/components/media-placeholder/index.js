@@ -100,23 +100,6 @@ class MediaPlaceholder extends Component {
 					onFilesDrop={ this.onFilesUpload }
 					onHTMLDrop={ onHTMLDrop }
 				/>
-				{ onSelectURL && (
-					<form onSubmit={ this.onSubmitSrc }>
-						<input
-							type="url"
-							className="components-placeholder__input"
-							aria-label={ labels.title }
-							placeholder={ __( 'Enter URL here…' ) }
-							onChange={ this.onChangeSrc }
-							value={ this.state.src }
-						/>
-						<Button
-							isLarge
-							type="submit">
-							{ __( 'Use URL' ) }
-						</Button>
-					</form>
-				) }
 				<FormFileUpload
 					isLarge
 					className="editor-media-placeholder__upload-button"
@@ -138,6 +121,26 @@ class MediaPlaceholder extends Component {
 						</Button>
 					) }
 				/>
+				{ onSelectURL && (
+					<form
+						className="editor-media-placeholder__url-input-form"
+						onSubmit={ this.onSubmitSrc }
+					>
+						<input
+							type="url"
+							className="components-placeholder__input"
+							aria-label={ labels.title }
+							placeholder={ __( 'Enter URL here…' ) }
+							onChange={ this.onChangeSrc }
+							value={ this.state.src }
+						/>
+						<Button
+							isLarge
+							type="submit">
+							{ __( 'Use URL' ) }
+						</Button>
+					</form>
+				) }
 			</Placeholder>
 		);
 	}
