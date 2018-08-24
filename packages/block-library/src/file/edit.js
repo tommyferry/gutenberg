@@ -151,7 +151,7 @@ class FileEdit extends Component {
 		}
 
 		const classes = classnames( className, {
-			'is-transient': this.isBlobURL( href ),
+			'is-transient': isBlobURL( href ),
 		} );
 
 		return (
