@@ -54,6 +54,7 @@ const LINK_DESTINATION_NONE = 'none';
 const LINK_DESTINATION_MEDIA = 'media';
 const LINK_DESTINATION_ATTACHMENT = 'attachment';
 const LINK_DESTINATION_CUSTOM = 'custom';
+export const RELEVANT_MEDIA_FIELDS = [ 'alt', 'caption', 'id', 'url' ];
 
 class ImageEdit extends Component {
 	constructor() {
@@ -86,7 +87,7 @@ class ImageEdit extends Component {
 				mediaUpload( {
 					filesList: [ file ],
 					onFileChange: ( [ image ] ) => {
-						setAttributes( { ...image } );
+						setAttributes( { ...pick( image, RELEVANT_MEDIA_FIELDS ) } );
 					},
 					allowedType: 'image',
 				} );
@@ -120,7 +121,7 @@ class ImageEdit extends Component {
 			return;
 		}
 		this.props.setAttributes( {
-			...pick( media, [ 'alt', 'id', 'caption', 'url' ] ),
+			...pick( media, RELEVANT_MEDIA_FIELDS ),
 			width: undefined,
 			height: undefined,
 		} );
