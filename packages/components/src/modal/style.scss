@@ -75,6 +75,5 @@
 	// The height of the content is the height of its parent, minus the header. after that, the offset was 3px.
 	height: 100%;
 	overflow: auto;
-	padding: $panel-padding;
 	padding: $grid-size-large;
 }
