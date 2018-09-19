@@ -25,14 +25,15 @@
 	outline: none;
 	overflow: auto;
 
-	// Show a bigger modal on bigger screens.
+	// Show a centered modal on bigger screens.
 	@include break-small() {
 		top: 50%;
 		right: auto;
 		bottom: auto;
 		left: 50%;
+		min-width: $modal-min-width;
 		max-width: calc(100% - #{ $grid-size-large } - #{ $grid-size-large });
-		max-height: calc(100% - #{ $grid-size-large } - #{ $grid-size-large });
+		max-height: calc(100% - #{ $header-height });
 		transform: translate(-50%, -50%);
 	}
 }
@@ -40,6 +41,7 @@
 .components-modal__header {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	box-sizing: border-box;
 	height: $header-height;
 	position: sticky;
