@@ -39,7 +39,7 @@ import {
 	getTextContent,
 	join,
 	insert,
-} from '@wordpress/rich-text-structure';
+} from '@wordpress/rich-text-value';
 import deprecated from '@wordpress/deprecated';
 
 /**
