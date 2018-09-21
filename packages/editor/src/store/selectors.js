@@ -1946,3 +1946,7 @@ export function isPublishSidebarEnabled( state ) {
 	}
 	return PREFERENCES_DEFAULTS.isPublishSidebarEnabled;
 }
+
+export function getLastEditTime( state ) {
+	return state.editor.lastChange;
+}
