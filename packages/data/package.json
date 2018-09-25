@@ -29,7 +29,7 @@
 		"@wordpress/redux-routine": "file:../redux-routine",
 		"equivalent-key-map": "^0.2.0",
 		"lodash": "^4.17.10",
-		"redux": "^3.7.2"
+		"redux": "^4.0.0"
 	},
 	"devDependencies": {
 		"deep-freeze": "^0.0.1",
