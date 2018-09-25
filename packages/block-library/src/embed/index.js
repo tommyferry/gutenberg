@@ -380,7 +380,8 @@ const embedAttributes = {
 		type: 'string',
 	},
 	caption: {
-		source: 'children',
+		source: 'rich-text-value',
+		type: 'rich-text-value',
 		selector: 'figcaption',
 	},
 	type: {
