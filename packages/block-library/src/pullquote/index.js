@@ -9,11 +9,13 @@ import {
 const blockAttributes = {
 	value: {
 		source: 'rich-text-value',
+		type: 'rich-text-value',
 		selector: 'blockquote',
 		multiline: 'p',
 	},
 	citation: {
 		source: 'rich-text-value',
+		type: 'rich-text-value',
 		selector: 'cite',
 	},
 };
@@ -102,7 +104,8 @@ export const settings = {
 		attributes: {
 			...blockAttributes,
 			citation: {
-				source: 'children',
+				source: 'rich-text-value',
+				type: 'rich-text-value',
 				selector: 'footer',
 			},
 			align: {
