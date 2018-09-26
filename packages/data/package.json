@@ -27,7 +27,7 @@
 		"@wordpress/element": "file:../element",
 		"@wordpress/is-shallow-equal": "file:../is-shallow-equal",
 		"@wordpress/redux-routine": "file:../redux-routine",
-		"equivalent-key-map": "^0.2.0",
+		"equivalent-key-map": "^0.2.2",
 		"lodash": "^4.17.10",
 		"redux": "^3.7.2"
 	},
