@@ -24,8 +24,8 @@ import {
  * Internal dependencies
  */
 import PositionedAtSelection from './positioned-at-selection';
-import URLInput from '../../url-input';
-import { filterURLForDisplay } from '../../../utils/url';
+import URLInput from '../../../url-input';
+import { filterURLForDisplay } from '../../../../utils/url';
 
 const stopKeyPropagation = ( event ) => event.stopPropagation();
 
@@ -53,7 +53,7 @@ function isShowingInput( props, state ) {
 	return props.addingLink || state.editLink;
 }
 
-class LinkContainer extends Component {
+class InlineLinkUI extends Component {
 	constructor() {
 		super( ...arguments );
 
@@ -106,12 +106,14 @@ class LinkContainer extends Component {
 	}
 
 	setLinkTarget( opensInNewWindow ) {
+		const { link, value, onChange } = this.props;
+
 		this.setState( { opensInNewWindow } );
 
 		// Apply now if URL is not being edited.
 		if ( ! isShowingInput( this.props, this.state ) ) {
-			const { href } = getLinkAttributesFromFormat( this.props.link );
-			this.props.applyFormat( createLinkFormat( { href, opensInNewWindow } ) );
+			const { href } = getLinkAttributesFromFormat( link );
+			onChange( applyFormat( value, createLinkFormat( { href, opensInNewWindow } ) ) );
 		}
 	}
 
@@ -121,22 +123,22 @@ class LinkContainer extends Component {
 	}
 
 	submitLink( event ) {
-		const { link, record } = this.props;
+		const { link, value, onChange, speak } = this.props;
 		const { inputValue, opensInNewWindow } = this.state;
 		const href = prependHTTP( inputValue );
 		const format = createLinkFormat( { href, opensInNewWindow } );
 
-		if ( isCollapsed( record ) ) {
+		if ( isCollapsed( value ) ) {
 			const toInsert = applyFormat( create( { text: href } ), format, 0, href.length );
-			this.props.onChange( insert( record, toInsert ) );
+			onChange( insert( value, toInsert ) );
 		} else {
-			this.props.applyFormat( format );
+			onChange( applyFormat( value, format ) );
 		}
 
 		this.resetState();
 
 		if ( ! link ) {
-			this.props.speak( __( 'Link added.' ), 'assertive' );
+			speak( __( 'Link added.' ), 'assertive' );
 		}
 
 		event.preventDefault();
@@ -148,7 +150,7 @@ class LinkContainer extends Component {
 	}
 
 	render() {
-		const { link, addingLink, record } = this.props;
+		const { link, addingLink, value } = this.props;
 
 		if ( ! link && ! addingLink ) {
 			return null;
@@ -171,7 +173,7 @@ class LinkContainer extends Component {
 			<Fill name="RichText.Siblings">
 				<PositionedAtSelection
 					className="editor-format-toolbar__link-container"
-					key={ `${ record.start }${ record.end }` /* Used to force rerender on selection change */ }
+					key={ `${ value.start }${ value.end }` /* Used to force rerender on selection change */ }
 				>
 					<Popover
 						position="bottom center"
@@ -237,4 +239,4 @@ class LinkContainer extends Component {
 	}
 }
 
-export default withSpokenMessages( LinkContainer );
+export default withSpokenMessages( InlineLinkUI );

@@ -15,11 +15,34 @@ import { Component, RawHTML } from '@wordpress/element';
 import { withInstanceId, compose } from '@wordpress/compose';
 import { toHTMLString } from '@wordpress/rich-text-value';
 import { Toolbar } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { FORMATTING_CONTROLS } from './formatting-controls';
+
+const FORMATTING_CONTROLS = [
+	{
+		icon: 'editor-bold',
+		title: __( 'Bold' ),
+		format: 'bold',
+	},
+	{
+		icon: 'editor-italic',
+		title: __( 'Italic' ),
+		format: 'italic',
+	},
+	{
+		icon: 'admin-links',
+		title: __( 'Link' ),
+		format: 'link',
+	},
+	{
+		icon: 'editor-strikethrough',
+		title: __( 'Strikethrough' ),
+		format: 'strikethrough',
+	},
+];
 
 const isRichTextValueEmpty = ( value ) => {
 	return ! value || ! value.length;
