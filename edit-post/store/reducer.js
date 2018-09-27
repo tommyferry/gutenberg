@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -45,6 +45,20 @@ export const preferences = combineReducers( {
 			case 'OPEN_GENERAL_SIDEBAR':
 			case 'CLOSE_GENERAL_SIDEBAR':
 				return action.type === 'CLOSE_GENERAL_SIDEBAR';
+		}
+
+		return state;
+	},
+	disabledPanels( state = PREFERENCES_DEFAULTS.disabledPanels, action ) {
+		switch ( action.type ) {
+			case 'ENABLE_PANEL':
+				return omit( state, action.panel );
+
+			case 'DISABLE_PANEL':
+				return {
+					...state,
+					[ action.panel ]: true,
+				};
 		}
 
 		return state;

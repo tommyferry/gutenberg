@@ -99,6 +99,11 @@ export function isPublishSidebarOpened( state ) {
 	return state.publishSidebarActive;
 }
 
+export function isEditorSidebarPanelEnabled( state, panel ) {
+	const disabledPanels = getPreference( state, 'disabledPanels' );
+	return disabledPanels ? ! disabledPanels[ panel ] : true;
+}
+
 /**
  * Returns true if the editor sidebar panel is open, or false otherwise.
  *

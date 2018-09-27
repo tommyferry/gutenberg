@@ -83,6 +83,20 @@ export function togglePublishSidebar() {
 	};
 }
 
+export function enablePanel( panel ) {
+	return {
+		type: 'ENABLE_PANEL',
+		panel,
+	};
+}
+
+export function disablePanel( panel ) {
+	return {
+		type: 'DISABLE_PANEL',
+		panel,
+	};
+}
+
 /**
  * Returns an action object used in signalling that use toggled a panel in the editor.
  *
