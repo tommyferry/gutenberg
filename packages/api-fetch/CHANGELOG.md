@@ -1,3 +1,9 @@
+## 2.0.1
+
+### Bug Fixes
+
+- Make sure the return value of apiFetch is instance of Promise.
+
 ## 2.0.0 (2018-09-05)
 
 ### Breaking Change

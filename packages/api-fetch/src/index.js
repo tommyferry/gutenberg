@@ -34,14 +34,16 @@ function apiFetch( options ) {
 			headers[ 'Content-Type' ] = 'application/json';
 		}
 
-		const responsePromise = window.fetch(
-			url || path,
-			{
-				...remainingOptions,
-				credentials: 'include',
-				body: body || JSON.stringify( data ),
-				headers,
-			}
+		const responsePromise = new Promise( ( resolve, reject ) =>
+			window.fetch(
+				url || path,
+				{
+					...remainingOptions,
+					credentials: 'include',
+					body: body || JSON.stringify( data ),
+					headers,
+				}
+			).then( resolve, reject )
 		);
 		const checkStatus = ( response ) => {
 			if ( response.status >= 200 && response.status < 300 ) {
