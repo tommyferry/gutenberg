@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
  * Internal dependencies
  */
 
-import { create } from '../create';
+import { create, isFormatEqual } from '../create';
 import { getSparseArrayLength } from './helpers';
 
 const { window } = new JSDOM();
@@ -550,5 +550,80 @@ describe( 'create', () => {
 		expect( value.formats[ 0 ][ 0 ] ).toBe( value.formats[ 1 ][ 0 ] );
 		expect( value.formats[ 0 ][ 0 ] ).toBe( value.formats[ 2 ][ 0 ] );
 		expect( value.formats[ 2 ][ 1 ] ).toBe( value.formats[ 3 ][ 1 ] );
+	} );
+
+	it( 'should use same reference for equal format', () => {
+		const value = create( { html: '<a href="#">a</a><a href="#">a</a>' } );
+		expect( value.formats[ 0 ][ 0 ] ).toBe( value.formats[ 1 ][ 0 ] );
+	} );
+
+	it( 'should use different reference for different format', () => {
+		const value = create( { html: '<a href="#">a</a><a href="#a">a</a>' } );
+		expect( value.formats[ 0 ][ 0 ] ).not.toBe( value.formats[ 1 ][ 0 ] );
+	} );
+} );
+
+describe( 'isFormatEqual', () => {
+	const spec = [
+		{
+			format1: undefined,
+			format2: undefined,
+			isEqual: true,
+			description: 'should return true if both are undefined',
+		},
+		{
+			format1: {},
+			format2: undefined,
+			isEqual: false,
+			description: 'should return false if one is undefined',
+		},
+		{
+			format1: { type: 'bold' },
+			format2: { type: 'bold' },
+			isEqual: true,
+			description: 'should return true if both have same type',
+		},
+		{
+			format1: { type: 'bold' },
+			format2: { type: 'italic' },
+			isEqual: false,
+			description: 'should return false if one has different type',
+		},
+		{
+			format1: { type: 'bold', attributes: {} },
+			format2: { type: 'bold' },
+			isEqual: false,
+			description: 'should return false if one has undefined attributes',
+		},
+		{
+			format1: { type: 'bold', attributes: { a: '1' } },
+			format2: { type: 'bold', attributes: { a: '1' } },
+			isEqual: true,
+			description: 'should return true if both have same attributes',
+		},
+		{
+			format1: { type: 'bold', attributes: { a: '1' } },
+			format2: { type: 'bold', attributes: { b: '1' } },
+			isEqual: false,
+			description: 'should return false if one has different attributes',
+		},
+		{
+			format1: { type: 'bold', attributes: { a: '1' } },
+			format2: { type: 'bold', attributes: { a: '1', b: '1' } },
+			isEqual: false,
+			description: 'should return false if one has a different amount of attributes',
+		},
+		{
+			format1: { type: 'bold', attributes: { b: '1', a: '1' } },
+			format2: { type: 'bold', attributes: { a: '1', b: '1' } },
+			isEqual: true,
+			description: 'should return true both have same attributes but different order',
+		},
+	];
+
+	spec.forEach( ( { format1, format2, isEqual, description } ) => {
+		it( description, () => {
+			expect( isFormatEqual( format1, format2 ) ).toBe( isEqual );
+		} );
 	} );
 } );
